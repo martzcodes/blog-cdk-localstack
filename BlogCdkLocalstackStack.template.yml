@@ -1,0 +1,515 @@
+Resources:
+  BeerE09E1431:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      KeySchema:
+        - AttributeName: UserId
+          KeyType: HASH
+        - AttributeName: BeerId
+          KeyType: RANGE
+      AttributeDefinitions:
+        - AttributeName: UserId
+          AttributeType: S
+        - AttributeName: BeerId
+          AttributeType: S
+      BillingMode: PAY_PER_REQUEST
+      TableName: Beer
+    UpdateReplacePolicy: Delete
+    DeletionPolicy: Delete
+    Metadata:
+      aws:cdk:path: BlogCdkLocalstackStack/Beer/Resource
+  updateReviewFunctionServiceRole57FA81FA:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action: sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+        Version: "2012-10-17"
+      ManagedPolicyArns:
+        - Fn::Join:
+            - ""
+            - - "arn:"
+              - Ref: AWS::Partition
+              - :iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+    Metadata:
+      aws:cdk:path: BlogCdkLocalstackStack/updateReviewFunction/ServiceRole/Resource
+  updateReviewFunctionServiceRoleDefaultPolicyD907B783:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyDocument:
+        Statement:
+          - Action:
+              - dynamodb:BatchGetItem
+              - dynamodb:GetRecords
+              - dynamodb:GetShardIterator
+              - dynamodb:Query
+              - dynamodb:GetItem
+              - dynamodb:Scan
+              - dynamodb:BatchWriteItem
+              - dynamodb:PutItem
+              - dynamodb:UpdateItem
+              - dynamodb:DeleteItem
+            Effect: Allow
+            Resource:
+              - Fn::GetAtt:
+                  - BeerE09E1431
+                  - Arn
+              - Ref: AWS::NoValue
+        Version: "2012-10-17"
+      PolicyName: updateReviewFunctionServiceRoleDefaultPolicyD907B783
+      Roles:
+        - Ref: updateReviewFunctionServiceRole57FA81FA
+    Metadata:
+      aws:cdk:path: BlogCdkLocalstackStack/updateReviewFunction/ServiceRole/DefaultPolicy/Resource
+  updateReviewFunctionF0FF17E0:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket:
+          Ref: AssetParameters9f0d0252e8939ff7b7684dddb1407b509985c6667731e2291c60bd38751238bfS3BucketCB7DDA63
+        S3Key:
+          Fn::Join:
+            - ""
+            - - Fn::Select:
+                  - 0
+                  - Fn::Split:
+                      - "||"
+                      - Ref: AssetParameters9f0d0252e8939ff7b7684dddb1407b509985c6667731e2291c60bd38751238bfS3VersionKey35DBE983
+              - Fn::Select:
+                  - 1
+                  - Fn::Split:
+                      - "||"
+                      - Ref: AssetParameters9f0d0252e8939ff7b7684dddb1407b509985c6667731e2291c60bd38751238bfS3VersionKey35DBE983
+      Handler: index.handler
+      Role:
+        Fn::GetAtt:
+          - updateReviewFunctionServiceRole57FA81FA
+          - Arn
+      Runtime: nodejs12.x
+    DependsOn:
+      - updateReviewFunctionServiceRoleDefaultPolicyD907B783
+      - updateReviewFunctionServiceRole57FA81FA
+    Metadata:
+      aws:cdk:path: BlogCdkLocalstackStack/updateReviewFunction/Resource
+      aws:asset:path: asset.9f0d0252e8939ff7b7684dddb1407b509985c6667731e2291c60bd38751238bf
+      aws:asset:property: Code
+  readReviewFunctionServiceRole77A9B597:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action: sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+        Version: "2012-10-17"
+      ManagedPolicyArns:
+        - Fn::Join:
+            - ""
+            - - "arn:"
+              - Ref: AWS::Partition
+              - :iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+    Metadata:
+      aws:cdk:path: BlogCdkLocalstackStack/readReviewFunction/ServiceRole/Resource
+  readReviewFunctionServiceRoleDefaultPolicy2543AE62:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyDocument:
+        Statement:
+          - Action:
+              - dynamodb:BatchGetItem
+              - dynamodb:GetRecords
+              - dynamodb:GetShardIterator
+              - dynamodb:Query
+              - dynamodb:GetItem
+              - dynamodb:Scan
+            Effect: Allow
+            Resource:
+              - Fn::GetAtt:
+                  - BeerE09E1431
+                  - Arn
+              - Ref: AWS::NoValue
+        Version: "2012-10-17"
+      PolicyName: readReviewFunctionServiceRoleDefaultPolicy2543AE62
+      Roles:
+        - Ref: readReviewFunctionServiceRole77A9B597
+    Metadata:
+      aws:cdk:path: BlogCdkLocalstackStack/readReviewFunction/ServiceRole/DefaultPolicy/Resource
+  readReviewFunction94EC729D:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket:
+          Ref: AssetParametersbbb4c158e87e2f887622dba6ea7ff82f0f4f275cfeb8d16eb24b1eb055e55afbS3Bucket8C765438
+        S3Key:
+          Fn::Join:
+            - ""
+            - - Fn::Select:
+                  - 0
+                  - Fn::Split:
+                      - "||"
+                      - Ref: AssetParametersbbb4c158e87e2f887622dba6ea7ff82f0f4f275cfeb8d16eb24b1eb055e55afbS3VersionKey851A27A5
+              - Fn::Select:
+                  - 1
+                  - Fn::Split:
+                      - "||"
+                      - Ref: AssetParametersbbb4c158e87e2f887622dba6ea7ff82f0f4f275cfeb8d16eb24b1eb055e55afbS3VersionKey851A27A5
+      Handler: index.handler
+      Role:
+        Fn::GetAtt:
+          - readReviewFunctionServiceRole77A9B597
+          - Arn
+      Runtime: nodejs12.x
+    DependsOn:
+      - readReviewFunctionServiceRoleDefaultPolicy2543AE62
+      - readReviewFunctionServiceRole77A9B597
+    Metadata:
+      aws:cdk:path: BlogCdkLocalstackStack/readReviewFunction/Resource
+      aws:asset:path: asset.bbb4c158e87e2f887622dba6ea7ff82f0f4f275cfeb8d16eb24b1eb055e55afb
+      aws:asset:property: Code
+  beerapi67AE41CF:
+    Type: AWS::ApiGateway::RestApi
+    Properties:
+      Name: beer-api
+    Metadata:
+      aws:cdk:path: BlogCdkLocalstackStack/beer-api/Resource
+  beerapiCloudWatchRole81F996BB:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action: sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service: apigateway.amazonaws.com
+        Version: "2012-10-17"
+      ManagedPolicyArns:
+        - Fn::Join:
+            - ""
+            - - "arn:"
+              - Ref: AWS::Partition
+              - :iam::aws:policy/service-role/AmazonAPIGatewayPushToCloudWatchLogs
+    Metadata:
+      aws:cdk:path: BlogCdkLocalstackStack/beer-api/CloudWatchRole/Resource
+  beerapiAccount2152DC9C:
+    Type: AWS::ApiGateway::Account
+    Properties:
+      CloudWatchRoleArn:
+        Fn::GetAtt:
+          - beerapiCloudWatchRole81F996BB
+          - Arn
+    DependsOn:
+      - beerapi67AE41CF
+    Metadata:
+      aws:cdk:path: BlogCdkLocalstackStack/beer-api/Account
+  beerapiDeployment3077C14B26da823256c4ecc7e0f6cf539683f3ef:
+    Type: AWS::ApiGateway::Deployment
+    Properties:
+      RestApiId:
+        Ref: beerapi67AE41CF
+      Description: Automatically created by the RestApi construct
+    DependsOn:
+      - beerapiusersuserbeerPOST2D1FBB1F
+      - beerapiusersuserbeerE37FAAD9
+      - beerapiusersuserGETCE81253D
+      - beerapiusersuser40A97AB3
+      - beerapiusers7623AC8A
+    Metadata:
+      aws:cdk:path: BlogCdkLocalstackStack/beer-api/Deployment/Resource
+  beerapiDeploymentStageprod3F2FBBD3:
+    Type: AWS::ApiGateway::Stage
+    Properties:
+      RestApiId:
+        Ref: beerapi67AE41CF
+      DeploymentId:
+        Ref: beerapiDeployment3077C14B26da823256c4ecc7e0f6cf539683f3ef
+      StageName: prod
+    Metadata:
+      aws:cdk:path: BlogCdkLocalstackStack/beer-api/DeploymentStage.prod/Resource
+  beerapiusers7623AC8A:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      ParentId:
+        Fn::GetAtt:
+          - beerapi67AE41CF
+          - RootResourceId
+      PathPart: users
+      RestApiId:
+        Ref: beerapi67AE41CF
+    Metadata:
+      aws:cdk:path: BlogCdkLocalstackStack/beer-api/Default/users/Resource
+  beerapiusersuser40A97AB3:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      ParentId:
+        Ref: beerapiusers7623AC8A
+      PathPart: "{user}"
+      RestApiId:
+        Ref: beerapi67AE41CF
+    Metadata:
+      aws:cdk:path: BlogCdkLocalstackStack/beer-api/Default/users/{user}/Resource
+  beerapiusersuserGETApiPermissionBlogCdkLocalstackStackbeerapi01021E61GETusersuser199DA8EE:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName:
+        Fn::GetAtt:
+          - readReviewFunction94EC729D
+          - Arn
+      Principal: apigateway.amazonaws.com
+      SourceArn:
+        Fn::Join:
+          - ""
+          - - "arn:"
+            - Ref: AWS::Partition
+            - ":execute-api:"
+            - Ref: AWS::Region
+            - ":"
+            - Ref: AWS::AccountId
+            - ":"
+            - Ref: beerapi67AE41CF
+            - /
+            - Ref: beerapiDeploymentStageprod3F2FBBD3
+            - /GET/users/*
+    Metadata:
+      aws:cdk:path: BlogCdkLocalstackStack/beer-api/Default/users/{user}/GET/ApiPermission.BlogCdkLocalstackStackbeerapi01021E61.GET..users.{user}
+  beerapiusersuserGETApiPermissionTestBlogCdkLocalstackStackbeerapi01021E61GETusersuser9933087C:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName:
+        Fn::GetAtt:
+          - readReviewFunction94EC729D
+          - Arn
+      Principal: apigateway.amazonaws.com
+      SourceArn:
+        Fn::Join:
+          - ""
+          - - "arn:"
+            - Ref: AWS::Partition
+            - ":execute-api:"
+            - Ref: AWS::Region
+            - ":"
+            - Ref: AWS::AccountId
+            - ":"
+            - Ref: beerapi67AE41CF
+            - /test-invoke-stage/GET/users/*
+    Metadata:
+      aws:cdk:path: BlogCdkLocalstackStack/beer-api/Default/users/{user}/GET/ApiPermission.Test.BlogCdkLocalstackStackbeerapi01021E61.GET..users.{user}
+  beerapiusersuserGETCE81253D:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      HttpMethod: GET
+      ResourceId:
+        Ref: beerapiusersuser40A97AB3
+      RestApiId:
+        Ref: beerapi67AE41CF
+      AuthorizationType: NONE
+      Integration:
+        IntegrationHttpMethod: POST
+        Type: AWS_PROXY
+        Uri:
+          Fn::Join:
+            - ""
+            - - "arn:"
+              - Ref: AWS::Partition
+              - ":apigateway:"
+              - Ref: AWS::Region
+              - :lambda:path/2015-03-31/functions/
+              - Fn::GetAtt:
+                  - readReviewFunction94EC729D
+                  - Arn
+              - /invocations
+    Metadata:
+      aws:cdk:path: BlogCdkLocalstackStack/beer-api/Default/users/{user}/GET/Resource
+  beerapiusersuserbeerE37FAAD9:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      ParentId:
+        Ref: beerapiusersuser40A97AB3
+      PathPart: "{beer}"
+      RestApiId:
+        Ref: beerapi67AE41CF
+    Metadata:
+      aws:cdk:path: BlogCdkLocalstackStack/beer-api/Default/users/{user}/{beer}/Resource
+  beerapiusersuserbeerPOSTApiPermissionBlogCdkLocalstackStackbeerapi01021E61POSTusersuserbeer86A593EA:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName:
+        Fn::GetAtt:
+          - updateReviewFunctionF0FF17E0
+          - Arn
+      Principal: apigateway.amazonaws.com
+      SourceArn:
+        Fn::Join:
+          - ""
+          - - "arn:"
+            - Ref: AWS::Partition
+            - ":execute-api:"
+            - Ref: AWS::Region
+            - ":"
+            - Ref: AWS::AccountId
+            - ":"
+            - Ref: beerapi67AE41CF
+            - /
+            - Ref: beerapiDeploymentStageprod3F2FBBD3
+            - /POST/users/*/*
+    Metadata:
+      aws:cdk:path: BlogCdkLocalstackStack/beer-api/Default/users/{user}/{beer}/POST/ApiPermission.BlogCdkLocalstackStackbeerapi01021E61.POST..users.{user}.{beer}
+  beerapiusersuserbeerPOSTApiPermissionTestBlogCdkLocalstackStackbeerapi01021E61POSTusersuserbeer16885B45:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName:
+        Fn::GetAtt:
+          - updateReviewFunctionF0FF17E0
+          - Arn
+      Principal: apigateway.amazonaws.com
+      SourceArn:
+        Fn::Join:
+          - ""
+          - - "arn:"
+            - Ref: AWS::Partition
+            - ":execute-api:"
+            - Ref: AWS::Region
+            - ":"
+            - Ref: AWS::AccountId
+            - ":"
+            - Ref: beerapi67AE41CF
+            - /test-invoke-stage/POST/users/*/*
+    Metadata:
+      aws:cdk:path: BlogCdkLocalstackStack/beer-api/Default/users/{user}/{beer}/POST/ApiPermission.Test.BlogCdkLocalstackStackbeerapi01021E61.POST..users.{user}.{beer}
+  beerapiusersuserbeerPOST2D1FBB1F:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      HttpMethod: POST
+      ResourceId:
+        Ref: beerapiusersuserbeerE37FAAD9
+      RestApiId:
+        Ref: beerapi67AE41CF
+      AuthorizationType: NONE
+      Integration:
+        IntegrationHttpMethod: POST
+        Type: AWS_PROXY
+        Uri:
+          Fn::Join:
+            - ""
+            - - "arn:"
+              - Ref: AWS::Partition
+              - ":apigateway:"
+              - Ref: AWS::Region
+              - :lambda:path/2015-03-31/functions/
+              - Fn::GetAtt:
+                  - updateReviewFunctionF0FF17E0
+                  - Arn
+              - /invocations
+    Metadata:
+      aws:cdk:path: BlogCdkLocalstackStack/beer-api/Default/users/{user}/{beer}/POST/Resource
+  CDKMetadata:
+    Type: AWS::CDK::Metadata
+    Properties:
+      Modules: aws-cdk=1.45.0,@aws-cdk/assets=1.45.0,@aws-cdk/aws-apigateway=1.45.0,@aws-cdk/aws-applicationautoscaling=1.45.0,@aws-cdk/aws-autoscaling-common=1.45.0,@aws-cdk/aws-cloudwatch=1.45.0,@aws-cdk/aws-dynamodb=1.45.0,@aws-cdk/aws-ec2=1.45.0,@aws-cdk/aws-events=1.45.0,@aws-cdk/aws-iam=1.45.0,@aws-cdk/aws-kms=1.45.0,@aws-cdk/aws-lambda=1.45.0,@aws-cdk/aws-lambda-nodejs=1.45.0,@aws-cdk/aws-logs=1.45.0,@aws-cdk/aws-s3=1.45.0,@aws-cdk/aws-s3-assets=1.45.0,@aws-cdk/aws-sqs=1.45.0,@aws-cdk/aws-ssm=1.45.0,@aws-cdk/cdk-assets-schema=1.45.0,@aws-cdk/cloud-assembly-schema=1.45.0,@aws-cdk/core=1.45.0,@aws-cdk/custom-resources=1.45.0,@aws-cdk/cx-api=1.45.0,@aws-cdk/region-info=1.45.0,jsii-runtime=node.js/v12.13.1
+    Condition: CDKMetadataAvailable
+Parameters:
+  AssetParameters9f0d0252e8939ff7b7684dddb1407b509985c6667731e2291c60bd38751238bfS3BucketCB7DDA63:
+    Type: String
+    Description: S3 bucket for asset "9f0d0252e8939ff7b7684dddb1407b509985c6667731e2291c60bd38751238bf"
+  AssetParameters9f0d0252e8939ff7b7684dddb1407b509985c6667731e2291c60bd38751238bfS3VersionKey35DBE983:
+    Type: String
+    Description: S3 key for asset version "9f0d0252e8939ff7b7684dddb1407b509985c6667731e2291c60bd38751238bf"
+  AssetParameters9f0d0252e8939ff7b7684dddb1407b509985c6667731e2291c60bd38751238bfArtifactHash489C5F90:
+    Type: String
+    Description: Artifact hash for asset "9f0d0252e8939ff7b7684dddb1407b509985c6667731e2291c60bd38751238bf"
+  AssetParametersbbb4c158e87e2f887622dba6ea7ff82f0f4f275cfeb8d16eb24b1eb055e55afbS3Bucket8C765438:
+    Type: String
+    Description: S3 bucket for asset "bbb4c158e87e2f887622dba6ea7ff82f0f4f275cfeb8d16eb24b1eb055e55afb"
+  AssetParametersbbb4c158e87e2f887622dba6ea7ff82f0f4f275cfeb8d16eb24b1eb055e55afbS3VersionKey851A27A5:
+    Type: String
+    Description: S3 key for asset version "bbb4c158e87e2f887622dba6ea7ff82f0f4f275cfeb8d16eb24b1eb055e55afb"
+  AssetParametersbbb4c158e87e2f887622dba6ea7ff82f0f4f275cfeb8d16eb24b1eb055e55afbArtifactHash57AE1BD4:
+    Type: String
+    Description: Artifact hash for asset "bbb4c158e87e2f887622dba6ea7ff82f0f4f275cfeb8d16eb24b1eb055e55afb"
+Outputs:
+  beerapiEndpointE86AAAC2:
+    Value:
+      Fn::Join:
+        - ""
+        - - https://
+          - Ref: beerapi67AE41CF
+          - .execute-api.
+          - Ref: AWS::Region
+          - "."
+          - Ref: AWS::URLSuffix
+          - /
+          - Ref: beerapiDeploymentStageprod3F2FBBD3
+          - /
+Conditions:
+  CDKMetadataAvailable:
+    Fn::Or:
+      - Fn::Or:
+          - Fn::Equals:
+              - Ref: AWS::Region
+              - ap-east-1
+          - Fn::Equals:
+              - Ref: AWS::Region
+              - ap-northeast-1
+          - Fn::Equals:
+              - Ref: AWS::Region
+              - ap-northeast-2
+          - Fn::Equals:
+              - Ref: AWS::Region
+              - ap-south-1
+          - Fn::Equals:
+              - Ref: AWS::Region
+              - ap-southeast-1
+          - Fn::Equals:
+              - Ref: AWS::Region
+              - ap-southeast-2
+          - Fn::Equals:
+              - Ref: AWS::Region
+              - ca-central-1
+          - Fn::Equals:
+              - Ref: AWS::Region
+              - cn-north-1
+          - Fn::Equals:
+              - Ref: AWS::Region
+              - cn-northwest-1
+          - Fn::Equals:
+              - Ref: AWS::Region
+              - eu-central-1
+      - Fn::Or:
+          - Fn::Equals:
+              - Ref: AWS::Region
+              - eu-north-1
+          - Fn::Equals:
+              - Ref: AWS::Region
+              - eu-west-1
+          - Fn::Equals:
+              - Ref: AWS::Region
+              - eu-west-2
+          - Fn::Equals:
+              - Ref: AWS::Region
+              - eu-west-3
+          - Fn::Equals:
+              - Ref: AWS::Region
+              - me-south-1
+          - Fn::Equals:
+              - Ref: AWS::Region
+              - sa-east-1
+          - Fn::Equals:
+              - Ref: AWS::Region
+              - us-east-1
+          - Fn::Equals:
+              - Ref: AWS::Region
+              - us-east-2
+          - Fn::Equals:
+              - Ref: AWS::Region
+              - us-west-1
+          - Fn::Equals:
+              - Ref: AWS::Region
+              - us-west-2
+
